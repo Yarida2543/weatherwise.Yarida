@@ -1,7 +1,7 @@
 Topic: Implementing and refining the get_weather_data() function
 
 Tool: ChatGPT
-Date: 2025-10-16
+Date: 2025-10-17
 
 Me:
 Alright,I already set up the API keys for my WeatherWise project. Now I want to write a function to get weather data from the OpenWeather API. Can you help me plan the structure before I start coding?
