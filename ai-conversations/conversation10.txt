@@ -1,0 +1,92 @@
+Topic: Creating and refining the day_labels() helper function
+Purpose: Demonstrate logical thinking in extracting and formatting date labels for weather visualisations
+
+Tool: ChatGPT
+Date: 2025-10-18
+
+Me:
+I need a helper function called day_labels() that extracts readable day labels from my daily weather data. Each dictionary in the list contains a "date" key, but sometimes the data might only have "sunrise" inside "astronomy". I want to make sure this function works in both cases. Can you help me plan it?
+
+AI:
+Absolutely! Let’s restate the goal:
+You want a function that takes a list of daily forecast dictionaries and returns a list of nicely formatted labels (like "Mon 01") for plotting.
+
+To achieve this, you’ll:
+
+Loop through each day in the list.
+
+Try to extract the date from d["date"].
+
+If that’s missing, fall back to the "sunrise" field under "astronomy".
+
+Format the date string using a helper like _format_day_label().
+
+Return all formatted labels as a list.
+
+Here’s a basic outline:
+
+def day_labels(daily: List[Dict[str, Any]]) -> List[str]:
+    labels = []
+    for d in daily:
+        date_str = d.get("date")
+        if not date_str:
+            # fallback logic here
+        labels.append(_format_day_label(date_str))
+    return labels
+
+
+Me:
+Okay. How should I safely extract the date if "date" isn’t available but "astronomy" is?
+
+AI:
+Good question 👏
+You can safely check that the "astronomy" list exists and contains data, then split the "sunrise" field:
+
+if not date_str and d.get("astronomy") and d["astronomy"] and d["astronomy"][0].get("sunrise"):
+    full_datetime_str = d["astronomy"][0]["sunrise"]
+    try:
+        date_str = full_datetime_str.split(" ")[0]  # take only the date part
+    except Exception:
+        date_str = full_datetime_str  # fallback to full string
+
+
+That makes the function resilient even when data formats vary slightly.
+
+Me:
+Nice. I’ll also use _format_day_label() to convert the date string into a readable format like "Fri 18". Here’s my full version:
+
+def day_labels(daily: List[Dict[str, Any]]) -> List[str]:
+    labels: List[str] = []
+    for d in daily:
+        date_str = d.get("date")
+        if not date_str and d.get("astronomy") and d["astronomy"] and d["astronomy"][0].get("sunrise"):
+            full_datetime_str = d["astronomy"][0]["sunrise"]
+            try:
+                date_str = full_datetime_str.split(" ")[0]
+            except Exception:
+                date_str = full_datetime_str
+        labels.append(_format_day_label(date_str))
+    return labels
+
+
+AI:
+Excellent ✅
+Your implementation is robust and readable.
+It:
+
+Handles multiple data structures safely
+
+Uses clear fallbacks for missing values
+
+Keeps the output consistent for downstream visualisation functions
+
+Here’s what happens for different cases:
+
+Input data	Output label example
+{"date": "2025-10-18"}	"Sat 18"
+{"astronomy": [{"sunrise": "2025-10-18 06:32:00"}]}	"Sat 18"
+
+So, even if "date" is missing, your plots will still have properly formatted labels.
+
+Me:
+Perfect. This will make my plots much clearer, and I understand now why it’s important to handle missing keys carefully — otherwise Matplotlib would throw errors or label the x-axis incorrectly.
