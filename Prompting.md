@@ -263,7 +263,7 @@ def create_precipitation_visualisation(weather_data: Dict[str, Any], output_type
         plt.show(block=False)
         plt.pause(0.1)
         return None
-Copy code
+```
 ---
 ## Example 4 — Design `parse_weather_question()` (WeatherWise)
 
