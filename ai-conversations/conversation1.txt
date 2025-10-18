@@ -1,7 +1,7 @@
 Topic: Setting up API keys for the WeatherWise Python project
 
 Tool: ChatGPT
-Date: 2025-10-18
+Date: 2025-10-16
 
 Me:
 Hi, I’m working on my WeatherWise Python project, and I need to use an API Key to get weather data. I’ve seen some people use environment variables for their API keys, but I’m not sure how that works. Can you explain how I can securely access and store an API key?
