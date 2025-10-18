@@ -1,0 +1,110 @@
+Topic: Setting up API keys for the WeatherWise Python project
+
+Tool: ChatGPT
+Date: 2025-10-18
+
+Me:
+Hi, I’m working on my WeatherWise Python project, and I need to use an API Key to get weather data. I’ve seen some people use environment variables for their API keys, but I’m not sure how that works. Can you explain how I can securely access and store an API key?
+
+AI:
+Sure! In Python, storing your API keys in environment variables is a safe and flexible way to avoid hardcoding them directly into your script.
+Here’s how you can do it step by step:
+
+Import the os module.
+
+Set your API key temporarily using:
+
+import os
+os.environ["WEATHER_API_KEY"] = "your_api_key_here"
+
+
+Access it anywhere in your code using:
+
+api_key = os.getenv("WEATHER_API_KEY")
+
+
+This approach helps protect your key if you upload your code to GitHub because you can exclude .env files using .gitignore.
+
+Me:
+Ok. But how do I get the API key from OpenWeather? I’ve never used one before and I think it will be complicated. Could you provide how to do that?
+
+AI:
+Good question! Here’s how you can obtain your API key from https://openweathermap.org/api
+:
+
+Create a free account on OpenWeather.
+
+Go to your profile and click “API keys.”
+
+Copy the key (a long alphanumeric string).
+
+Paste it in your Python environment using:
+
+os.environ["WEATHER_API_KEY"] = "YOUR_ACTUAL_KEY"
+
+
+Once done, you can test it by printing:
+
+print(os.getenv("WEATHER_API_KEY"))
+
+
+If it prints the key, your configuration works.
+
+Me:
+I got it. I also saw something about another environment variable called HANDS_ON_AI_API_KEY. Is that for the AI chatbot part of my project?
+
+AI:
+Exactly! The HANDS_ON_AI_API_KEY is used to authenticate with the Hands-On-AI module, which powers your chatbot or advisor functionality.
+You can configure both keys together like this:
+
+import os
+
+os.environ['HANDS_ON_AI_SERVER'] = 'https://ollama.serveur.au'
+os.environ['HANDS_ON_AI_MODEL'] = 'llama3.2'
+os.environ['HANDS_ON_AI_API_KEY'] = input('Enter your API key: ')  # safer way to input key
+os.environ["WEATHER_API_KEY"] = "220e281f356576ed04365173258a3eb1"  # Demo key
+
+
+Me:
+That looks clean. I like that the input() part hides the AI key from the code.
+But what happens if the user doesn’t have a valid key or forgets to set it?
+
+AI:
+Excellent edge-case thinking
+You can handle that by checking if the environment variable exists and returning an error if it doesn’t. Example:
+
+api_key = os.getenv("WEATHER_API_KEY")
+if not api_key:
+    print("Error: Missing API key. Please set your WEATHER_API_KEY first.")
+    exit()
+
+
+This ensures the program won’t break silently.
+
+Me:
+Nice! I want to test both the AI and weather parts, so can I just run this setup cell at the top of my notebook and use it across the project?
+
+AI:
+Yes, that’s a good design decision.
+Add the configuration cell at the top under a section called “Setup and Configuration.”
+All other functions (e.g., fetching data, displaying forecasts, answering weather-related questions) can then use the keys from os.getenv().
+
+Me:
+Cool. So the final code for my setup would look like this?
+
+AI:
+Yes! Here’s your improved version:
+
+import os
+
+# Configure API providers
+os.environ['HANDS_ON_AI_SERVER'] = 'https://ollama.serveur.au'
+os.environ['HANDS_ON_AI_MODEL'] = 'llama3.2'
+os.environ['HANDS_ON_AI_API_KEY'] = input('Enter your API key: ')  # safer for user
+os.environ["WEATHER_API_KEY"] = "220e281f356576ed04365173258a3eb1"  # Demo key for OpenWeather
+
+
+This block keeps your keys organised and secure while allowing easy updates later.
+
+Me (reflection):
+Thank you.This conversation helped me understand both why and how to store API keys safely. I also learned how to test and handle missing keys using error checking. Now I can apply this setup across all my weather and AI modules confidently.
