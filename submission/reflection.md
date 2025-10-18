@@ -1,16 +1,17 @@
 # ✍️ Project Reflection
 
 ## AI Tools Used
-What tools did you use (e.g., ChatGPT, Copilot)? How did they help?
-
+I use ChatGPT and Gemini which are provided on Google Colab. These AI can help me to improve and provide better code that I wrote. Gemini in Google Colab methods can help to encourage my code and clarify API usage. It also accelerates code draft such as scaffolds and handling code. Gemini can provide the recommendation for manage code or comment because it can develop written artefacts. For instance, when I want to check my code and organize my code for easy to understand and read. Gemini provide the example, arrange, and break down my code or the comment in the directly way. Furthermore, ChatGPT that is a useful tool because it can help explain and show how to code by AI prompting techniques. For example, "How can I fix 'TypeError: unsupported operand type' errors?" That can explain and show the solution of this issue. It also creates implementation when comparing methods
 ## Prompting Techniques
-Which intentional prompting strategies did you apply?
-
+This project applied 5 prompting techniques 
+1. Chain of thought programming: guideline the problem and asking step by step. Beginning with asking the question and problem definition such as Will I bring umbrella tomorrow in Perth? asking for analysis of code, asking for method, getting implementation, and testing the code.  
+2. Persona Based Prompting: Asking for design the interface “What should I consider and organise the weather dashboard interface to make it clear and easy to use? and also used feedback loop by asking such as “Optimise this function without changing its output.” 
+3. Reverse Engineering: Identify and explaining how code work and why this code should be improved such as Can you improve my code for easy to readable. 
+4. Progressive Disclosure: asking How would you parse weather related questions? And provide the location “Will I bring umbrella tomorrow in Perth? 
+5. Decomposition Prompting: I asked AI for break down my code to check the quality of code  
 ## What Worked Well?
-Describe one thing you’re proud of.
-
+I'm so proud of my User Interface and Weather Data Functions that is difficult to generate code and input the data from another website that is OpenWeather. I try to handle the API key, read JSON and improve my code by using Gemini. In addition, the UI suggest the guidelines for users by inputting the visualisation. Moreover, I can design and decorate my code in user interface section for example, i provide the current temperature, chart and ask question with AI that user can select the choice by using number 1-5 that have to with pyinputpluse environment. Another is Weather Data Functions that data from raw OpenWeather was challenging because of API key and how to write the code for putting the data. However, I can achieve it and improve my code in both section by AI prompting and generate my own code that check it by Gemini. Therefore, it made the system easier to maintain and test 
 ## What Would You Do Differently?
-Describe one thing you'd change if you had more time.
-
+If I have more time, I want to improve my code for easy to read and add more function in my project. For example, I might change to do ipywidgets that user can click the panel to check or forecast the weather. Additionally, I want to add more functions in menu in mu user interface such as UV data and add more question in Natural language Processing that answer by AI. I would enhance accessibility and UX that clear legends and easy to navigate to forecast weather data. 
 ## Final Thoughts
-Any parting comments on your learning experience?
+ChatGPT and Gemini in Google Colab illustrated how AI can clarify, work, and improve our code that is not just copy and paste. AI always provide small testing after suggesting the code for understanding. In addition, this project is strengthened my skills for creating code and functional in my user interface, it also helps to handle with error. I can learn many experiences from this project nbecause this is challenging for design the interface, input the API Key from other website, and generate code that it sometimes error, so I have to learn and find the solution for finish my project. 
