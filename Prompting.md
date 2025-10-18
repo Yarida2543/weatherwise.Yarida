@@ -326,3 +326,87 @@ def parse_weather_question(question: str) -> Dict[str, Any]:
         "time": time_date,
     }
 ```
+---
+# the Six-Step Methodology (with Example)
+
+The **Six-Step Programming Methodology** is a structured workflow designed to help  developers think critically while building programs with the support of AI tools.  
+It promotes step-by-step reasoning, ensuring that every piece of code is purposeful, tested, and aligned with the overall project goals.
+---
+
+## 1) Restate the Problem (Foundation)
+**Goal:** Build a reusable `Get_data_from_Web(city, units)` that queries **OpenWeather 5-day/3-hour** data, reads the API key from `WEATHER_API_KEY`, and **fails safely** (bad city, bad key, network).
+
+**Why:** Clean separation of concerns (data access vs. processing), easier testing and reuse.
+
+---
+
+## 2) Inputs / Outputs (I/O)
+- **Inputs:** `city: str`, `units: "metric"|"imperial"`, env var `WEATHER_API_KEY`.
+- **Output:** JSON `dict` on success; `{"error": "..."}` on failure (clear, user-friendly messages).
+- **Constraints:** HTTP errors (404 city not found, 401 invalid key), timeouts, malformed JSON.
+
+---
+
+## 3) Work by Hand (Edge Cases)
+- Missing env var → immediate, clear error.
+- Invalid city / invalid key → catch HTTP 4xx and surface API message.
+- Network issues → timeout/connection errors.
+- Unexpected payload → JSON/parse issues.
+
+---
+
+## 4) Minimal Pseudocode
+- Get `api_key` → if missing, return error.
+- Build `base_url` + `params`.
+- `requests.get(..., timeout=10)` → `raise_for_status()`.
+- Return `response.json()`; map exceptions to `{"error": ...}`.
+
+---
+
+## 5) Final Python Helper (Short, Production-Style)
+
+```python
+import os, requests
+from typing import Dict, Any
+
+def Get_data_from_Web(city: str, units: str = "metric") -> Dict[str, Any]:
+    api_key = os.getenv("WEATHER_API_KEY")
+    if not api_key:
+        return {"error": "WEATHER_API_KEY not configured."}
+
+    base_url = "https://api.openweathermap.org/data/2.5/forecast"
+    params = {"q": city, "appid": api_key, "units": units}
+
+    try:
+        r = requests.get(base_url, params=params, timeout=10)
+        r.raise_for_status()  # raises for 4xx/5xx
+        return r.json()
+    except requests.exceptions.HTTPError as e:
+        # surface API message if present (e.g., city not found, invalid key)
+        try:
+            detail = r.json().get("message")  # type: ignore[name-defined]
+        except Exception:
+            detail = str(e)
+        return {"error": f"HTTP error: {detail}"}
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Network error: {e}"}
+    except Exception as e:
+        return {"error": f"Unexpected error: {e}"}
+---
+## 6) Quick Test Plan
+
+- ✅ **Happy path:** `city="Perth", units="metric"` → JSON with `list`, `city`.
+- ❌ **Bad city:** `city="XyzNotAPlace"` → `{"error":"HTTP error: city not found"}`
+- ❌ **Bad/missing key:** unset or wrong key → config error or **401** HTTP error.
+- 🌐 **Offline/timeout:** simulate no internet → `{"error":"Network error: ..."}`  
+- 🧪 **Weird payload:** mock non-JSON → `{"error":"Unexpected error: ..."}`
+
+---
+
+## Intentional Prompting Techniques Demonstrated
+
+- **Explain reasoning:** asked *why* `raise_for_status()`; got HTTP-handling rationale.  
+- **Check assumptions:** verified env var presence and surfaced clear messages.  
+- **Refine & adapt:** introduced `base_url`, `params`, and timeouts.  
+- **Challenge initial solution:** added granular exception mapping.  
+- **Think practically:** separated concerns; testable helper; friendly user errors.
