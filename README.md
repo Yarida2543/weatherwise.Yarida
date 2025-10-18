@@ -65,18 +65,19 @@ Follow these steps to run **WeatherWise** locally or in **Jupyter Notebook**.
 ## 🛠️ Setup and Installation
 
 # Configure API keys
+```python
 os.environ["OPENWEATHER_API_KEY"] = "your_openweather_api_key"
 os.environ["HANDS_ON_AI_SERVER"] = "https://ollama.serveur.au"
 os.environ["HANDS_ON_AI_MODEL"] = "llama3.2"
 os.environ["HANDS_ON_AI_API_KEY"] = "your_ai_api_key"
-
+```
 ## 📦 Setup and Configuration
 
 Import required packages and set up your environment before running the notebook.
 Install dependencies
-```bash
+```python
 pip install requests matplotlib pyinputplus fetch-my-weather hands-on-ai
-
+```
 ## 🌤️ Weather Data Functions
 These helpers fetch and summarise forecasts from **OpenWeather** for easy use in charts and AI replies.
 
