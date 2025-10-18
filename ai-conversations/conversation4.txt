@@ -1,0 +1,124 @@
+Topic: Developing the Get_data_from_Web() function for retrieving OpenWeather API data
+
+
+Tool: ChatGPT
+Date: 2025-10-17
+
+Me:
+I want to create a helper function called Get_data_from_Web() to fetch weather data directly from OpenWeatherMap. I already set my WEATHER_API_KEY in environment variables, but I’m not sure how to structure the API request safely. Can you guide me?
+
+AI:
+Of course! Let’s restate your goal first:
+You want a reusable Python function that connects to OpenWeather’s 5-day/3-hour forecast API, retrieves data for a given city, and handles potential errors gracefully.
+
+The main steps are:
+
+Get the API key from environment variables
+
+Build the request URL
+
+Send the GET request
+
+Handle response and possible errors
+
+Here’s the basic layout:
+
+def Get_data_from_Web(city: str, units: str = "metric"):
+    api_key = os.getenv("WEATHER_API_KEY")
+    if not api_key:
+        return {"error": "Missing API key"}
+    
+    try:
+        url = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units={units}"
+        response = requests.get(url)
+        data = response.json()
+        return data
+    except Exception as e:
+        return {"error": str(e)}
+
+
+Me:
+That’s a good start. But how do I make sure it catches HTTP errors like “city not found” or “invalid API key”?
+
+AI:
+Excellent question! You can call response.raise_for_status() after requests.get() to automatically raise an HTTPError if the response status is 4xx or 5xx.
+
+Here’s how to integrate that:
+
+response = requests.get(url)
+response.raise_for_status()
+data = response.json()
+
+
+Then you can wrap that in a try/except block to handle these exceptions cleanly.
+
+For example:
+
+except requests.exceptions.RequestException as e:
+    print(f"Error fetching weather data: {e}")
+    return {"error": f"Error fetching weather data: {e}"}
+
+
+This ensures that if the API call fails (e.g., bad city name, network timeout, etc.), your app won’t crash.
+
+Me:
+I see. I also want to print a clear message if the environment variable isn’t set. Something like “API key not found.”
+
+AI:
+Good idea — that’s defensive programming.
+You can check this at the top of the function:
+
+api_key = os.getenv("WEATHER_API_KEY")
+if not api_key:
+    print("Error: WEATHER_API_KEY not found in environment variables.")
+    return {"error": "WEATHER_API_KEY not configured."}
+
+
+That way, the user instantly knows the root cause without digging through stack traces.
+
+Me:
+Makes sense. Should I include a base URL variable to make the code cleaner?
+
+AI:
+Yes — defining a base_url improves readability and flexibility if you change endpoints later.
+Here’s the full, improved version:
+
+def Get_data_from_Web(city: str, units: str = "metric"):
+    api_key = os.getenv("WEATHER_API_KEY")
+    if not api_key:
+        print("Error: WEATHER_API_KEY not found in environment variables.")
+        return {"error": "WEATHER_API_KEY not configured."}
+
+    try:
+        base_url = "https://api.openweathermap.org/data/2.5/forecast"
+        url = f"{base_url}?q={city}&appid={api_key}&units={units}"
+
+        response = requests.get(url)
+        response.raise_for_status()
+
+        data = response.json()
+        return data
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching weather data: {e}")
+        return {"error": f"Error fetching weather data: {e}"}
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return {"error": f"An unexpected error occurred: {e}"}
+
+
+Me:
+Perfect! I tested it and got valid JSON output for “Perth.” When I tried a fake city, it returned an error message — so error handling works too.
+
+Just to confirm, is this a good practice to use in my final project file?
+
+AI:
+Yes — this is a solid, production-style helper function.
+It separates API logic from data processing
+It safely handles key, network, and response errors
+It’s easy to test independently
+It aligns with clean modular design principles
+
+Me (reflection):
+This conversation helped me understand how to handle real API responses safely using Python’s requests library. I also learned how to handle HTTP exceptions properly and structure code for readability and maintenance.
