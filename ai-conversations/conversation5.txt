@@ -1,0 +1,134 @@
+Topic: Designing and refining the create_temperature_visualisation() function
+
+Tool: ChatGPT
+Date: 2025-10-18
+
+Me:
+Now that I’ve finished retrieving and processing the weather data, I want to create a function to visualise temperature trends for the next few days. It should show both maximum and minimum temperatures using Matplotlib. Can you help me plan the structure?
+
+AI:
+Sure! Let’s restate your problem first:
+You want a visualisation function that accepts your processed weather_data dictionary, extracts daily temperature information, and plots it clearly.
+
+The steps are:
+
+Get the "daily" list from weather_data.
+
+Extract max and min temperatures for each day.
+
+Generate x-axis labels (e.g., day names or dates).
+
+Plot both temperature lines with labels, title, and axes.
+
+Decide whether to display the figure or return it for later use.
+
+Here’s a simple scaffold:
+
+def create_temperature_visualisation(weather_data: Dict[str, Any], output_type: str = 'display'):
+    daily_forecast = weather_data.get("daily", [])
+    if not daily_forecast:
+        print("No forecast data available.")
+        return None
+
+    # Extract data
+    max_temps = [...]
+    min_temps = [...]
+    labels = [...]
+
+    # Plot using matplotlib
+
+
+Me:
+That looks good. How do I extract and handle missing data? Sometimes one of the temperatures might not exist in the dictionary.
+
+AI:
+Good — you can handle that with safe lookups and default values.
+For example:
+
+maximum_temperatures = [float(d.get("maxtemperature", 0) or 0) for d in daily_forecast]
+minimum_temperatures = [float(d.get("mintemperature", 0) or 0) for d in daily_forecast]
+
+
+This ensures you always get a valid numeric value (even if the key is missing).
+
+Me:
+Got it. I also have a helper function day_labels() that formats the x-axis labels. Should I use that here?
+
+AI:
+Absolutely — that improves readability on the graph.
+You can get labels like this:
+
+day_labels_list = day_labels(daily_forecast)
+
+
+Then pass that list as the x-axis values in your ax.plot() calls.
+
+Me:
+Okay. I want the function to either show the figure immediately or return it depending on an argument like output_type. What’s the best way to handle that?
+
+AI:
+That’s a great design idea — it adds flexibility for both interactive and programmatic use.
+You can implement it like this:
+
+if output_type == 'figure':
+    return fig
+else:
+    plt.show(block=False)
+    plt.pause(0.1)
+    return None
+
+
+This way:
+
+'display' shows the plot directly (for Jupyter notebooks)
+
+'figure' returns the object for saving or testing elsewhere
+
+Me:
+Alright, here’s my completed version now:
+
+def create_temperature_visualisation(weather_data: Dict[str, Any], output_type: str = 'display'):
+    daily_forecast_data = weather_data.get("daily", [])
+    if not daily_forecast_data:
+        print("No data to forecast temperatures plot.")
+        return None
+
+    maximum_temperatures = [float(d.get("maxtemperature", 0) or 0) for d in daily_forecast_data]
+    minimum_temperatures = [float(d.get("mintemperature", 0) or 0) for d in daily_forecast_data]
+    day_labels_list = day_labels(daily_forecast_data)
+
+    fig, ax = plt.subplots()
+    ax.plot(day_labels_list, maximum_temperatures, marker='o', label='Maximum Temperature (celsius)')
+    ax.plot(day_labels_list, minimum_temperatures, marker='o', label='Minimum Temperature (celsius)')
+
+    ax.set_title("Temperature Forecast in daily")
+    ax.set_xlabel("Day and Date")
+    ax.set_ylabel("Temperature (celsius)")
+    ax.legend()
+
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.show(block=False)
+        plt.pause(0.1)
+        return None
+
+
+AI:
+Perfect ✅
+You’ve created a clean, modular function that handles both missing data and flexible output types.
+Your Matplotlib setup is clear — you used:
+
+Line plots with markers for clarity
+
+Labels and legends for readability
+
+plt.tight_layout() to prevent overlapping text
+
+This will produce professional-looking visualisations suitable for your final WeatherWise report or presentation.
+
+Me:
+Thanks! I learned how to handle missing temperature values, structure my visualisation code clearly, and give users an option to either display or reuse the figure object later.
