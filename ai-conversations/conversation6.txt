@@ -1,0 +1,130 @@
+Topic: Creating the create_precipitation_visualisation() function
+Date: 2025-10-18
+
+Me:
+I already created a temperature visualisation function. Now I want to make another one for daily precipitation data. It should read totals from the weather data and display them as a bar chart. How should I approach this?
+
+AI:
+Good! Let’s restate the problem:
+You want to design a new visualisation function that:
+
+Reads precipitation totals from your processed weather_data
+
+Handles missing or incomplete data gracefully
+
+Creates a simple bar chart using Matplotlib
+
+Allows the user to either display or return the figure
+
+Let’s outline the steps:
+
+Retrieve the "daily" forecast data.
+
+Extract totalPrecipitation from each record.
+
+Generate day labels using your helper function day_labels().
+
+Plot bars representing precipitation in millimetres.
+
+Support both 'display' and 'figure' output types.
+
+Me:
+That structure looks similar to my temperature visualisation. How can I handle cases where totalPrecipitation is missing or has hourly data instead?
+
+AI:
+Excellent edge-case question
+You can check if totalPrecipitation exists — if not, try to estimate it by summing hourly precipitation entries:
+
+if millimeters is None and d.get("hourly"):
+    try:
+        millimeters = sum(float(h.get("precipi_MM") or 0.0) for h in d["hourly"])
+    except Exception:
+        millimeters = 0.0
+
+
+If neither is available, just set it to 0. This ensures your list always has a valid number for plotting.
+
+Me:
+Okay, and should I convert the precipitation to a float even if it’s stored as a string?
+
+AI:
+Yes — definitely. Some of your processed data stores numeric values as strings for consistency.
+Before appending to your totals list, you can safely convert them:
+
+try:
+    totals.append(float(millimeters))
+except Exception:
+    totals.append(0.0)
+
+
+This guarantees that all y-axis values are numeric.
+
+Me:
+Makes sense. Now for the visual part — I think I’ll use a bar chart instead of line plots since it’s easier to compare rainfall amounts. Is that right?
+
+AI:
+Exactly! A bar chart is the best choice here because it makes differences between daily rainfall amounts clearer at a glance.
+You can use:
+
+ax.bar(labels, totals, color="cyan")
+
+
+This gives a clear visual distinction from your temperature plots, which use lines.
+
+Me:
+Okay, here’s my full function draft. Can you check if it looks good?
+
+def create_precipitation_visualisation(weather_data: Dict[str, Any], output_type: str = 'display'):
+    daily = weather_data.get("daily", [])
+    if not daily:
+        print("No data to forecast precipitation plot.")
+        return None
+
+    totals: List[float] = []
+    labels = day_labels(daily)
+
+    for d in daily:
+        millimeters = d.get("totalPrecipitation")
+        if millimeters is None and d.get("hourly"):
+            try:
+                millimeters = sum(float(h.get("precipi_MM") or 0.0) for h in d["hourly"])
+            except Exception:
+                millimeters = 0.0
+        try:
+            totals.append(float(millimeters))
+        except Exception:
+            totals.append(0.0)
+
+    fig, ax = plt.subplots()
+    ax.bar(labels, totals, color="cyan")
+    ax.set_title("Forecast Precipitation in Daily")
+    ax.set_xlabel("Day and Date")
+    ax.set_ylabel("Precipitation (millimeters)")
+    plt.tight_layout()
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.show(block=False)
+        plt.pause(0.1)
+        return None
+
+
+AI:
+That’s perfect
+You followed consistent design conventions:
+
+Input validation before plotting
+
+Safe handling of missing and malformed data
+
+Logical variable naming and clear labels
+
+Flexible output options
+
+Consistent visual style with your other plots
+
+This ensures a professional, maintainable, and user-friendly visualisation component.
+
+Me:
+Thanks! I learned that precipitation data often needs fallback calculations from hourly data, and using bar charts makes it visually clearer than line charts. I also like that both my visual functions now follow the same structure for consistency.
